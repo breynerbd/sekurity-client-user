@@ -12,11 +12,15 @@ export function useAuth() {
     setLoading(true);
     setError(null);
     try {
-      const data = await authClient.login(email, password);
-      setSession(data.token, data.user);
+      const { accessToken } = await authClient.login(email, password);
+      // El login solo devuelve el token; guardamos el token primero para que
+      // el interceptor de axios lo adjunte en la siguiente petición a /me
+      setSession(accessToken, null);
+      const me = await authClient.getMe();
+      setSession(accessToken, me);
       return true;
     } catch (err) {
-      setError(err?.response?.data?.message || "No se pudo iniciar sesión");
+      setError(err?.response?.data?.message || err?.response?.data || "No se pudo iniciar sesión");
       return false;
     } finally {
       setLoading(false);

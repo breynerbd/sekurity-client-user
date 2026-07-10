@@ -1,3 +1,4 @@
+// Paleta inspirada en el dashboard de sekurity-client-admin (tema oscuro de seguridad)
 export const colors = {
   background: "#0B0F14",
   surface: "#141B22",

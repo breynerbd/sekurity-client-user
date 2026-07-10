@@ -7,7 +7,7 @@ export const commentClient = {
 
   create: (reportId, content) =>
     userApi
-      .post(COMMENT_ENDPOINTS.CREATE(reportId), { content })
+      .post(COMMENT_ENDPOINTS.CREATE(), { report_id: reportId, content })
       .then((r) => r.data),
 
   remove: (commentId) =>
