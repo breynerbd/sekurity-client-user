@@ -1,16 +1,16 @@
-// Paleta inspirada en el dashboard de sekurity-client-admin (tema oscuro de seguridad)
+// Paleta real de sekurity-client-admin (tema claro)
 export const colors = {
-  background: "#0B0F14",
-  surface: "#141B22",
-  surfaceAlt: "#1C2530",
-  primary: "#2F80ED",
-  primaryDark: "#1C5FBF",
-  danger: "#E74C3C",
-  warning: "#F2C94C",
-  success: "#27AE60",
-  text: "#F5F7FA",
-  textMuted: "#8A93A2",
-  border: "#26303B",
+  background: "#F8FAFC",
+  surface: "#FFFFFF",
+  surfaceAlt: "#F9FAFB",
+  primary: "#2563EB",
+  primaryDark: "#1D4ED8",
+  danger: "#EF4444",
+  warning: "#F59E0B",
+  success: "#16A34A",
+  text: "#1F2937",
+  textMuted: "#6B7280",
+  border: "#E5E7EB",
 };
 
 export const spacing = {
@@ -22,9 +22,9 @@ export const spacing = {
 };
 
 export const radius = {
-  sm: 6,
-  md: 10,
-  lg: 16,
+  sm: 8,
+  md: 12,
+  lg: 20, // client-admin usa mucho rounded-2xl (16-20px)
 };
 
 export const typography = {
