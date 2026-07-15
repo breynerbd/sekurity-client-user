@@ -25,7 +25,10 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm + 4,
-    color: colors.text,
+    
+    // CAMBIO AQUÍ: Cambiamos colors.text por colors.textPrimary para que sea negro 🌟
+    color: colors.textPrimary, 
+    
     fontSize: 14,
   },
   inputError: { borderColor: colors.danger },
