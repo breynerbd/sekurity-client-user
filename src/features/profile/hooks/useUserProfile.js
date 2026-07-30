@@ -6,33 +6,42 @@ import { useAuthStore } from "../../../shared/store/authStore";
 export function useUserProfile() {
   const storedUser = useAuthStore((s) => s.user);
   const updateUser = useAuthStore((s) => s.updateUser);
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Fuente confiable de "quién soy": GET /api/v1/auth/me del auth-service (confirmado en AuthController.cs)
-  const fetchProfile = useCallback(async () => {
+  const [myReports, setMyReports] = useState([]);
+  const [myComments, setMyComments] = useState([]);
+
+  const fetchProfileData = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const data = await authClient.getMe();
-      updateUser(data);
+      const [profileData, reportsData, commentsData] = await Promise.all([
+        authClient.getMe(),
+        userClient.getMyReports().catch(() => []),
+        userClient.getMyComments().catch(() => [])
+      ]);
+
+      updateUser(profileData);
+      setMyReports(reportsData);
+      setMyComments(commentsData);
     } catch (err) {
-      setError(err?.response?.data?.message || "No se pudo cargar el perfil");
+      setError(err?.response?.data?.message || "No se pudo cargar la información del perfil");
     } finally {
       setLoading(false);
     }
   }, [updateUser]);
 
   useEffect(() => {
-    fetchProfile();
-  }, [fetchProfile]);
+    fetchProfileData();
+  }, [fetchProfileData]);
 
   const saveProfile = async (payload) => {
     setLoading(true);
     try {
       const data = await userClient.updateProfile(payload);
-      // Fusionamos: no perdemos username/email que vienen del auth-service
-      updateUser({ ...storedUser, nombre: data.nombre, apellido: data.apellido, telefono: data.telefono });
+      updateUser({ ...storedUser, name: data.name, surname: data.surname, phone: data.phone });
       return true;
     } catch (err) {
       setError(err?.response?.data?.message || "No se pudo actualizar el perfil");
@@ -40,7 +49,15 @@ export function useUserProfile() {
     } finally {
       setLoading(false);
     }
-};
+  };
 
-  return { user: storedUser, loading, error, saveProfile, refetch: fetchProfile };
+  return {
+    user: storedUser,
+    myReports,
+    myComments,
+    loading,
+    error,
+    saveProfile,
+    refetch: fetchProfileData,
+  };
 }
