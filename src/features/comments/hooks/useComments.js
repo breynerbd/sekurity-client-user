@@ -25,14 +25,33 @@ export function useComments(reportId) {
     fetchComments();
   }, [fetchComments]);
 
-  const addComment = async (content) => {
+  const addComment = async (content, parentId = null) => {
     setPosting(true);
     try {
-      const created = await commentClient.create(reportId, content);
-      setComments((prev) => [...prev, created]);
+      // Supongamos que tu cliente API hace la petición POST
+      const newComment = await commentClient.create(reportId, content, parentId);
+
+      setComments((prevComments) => {
+        if (!parentId) {
+          // Es un comentario principal, va al inicio o final
+          return [newComment, ...prevComments];
+        } else {
+          // Es una respuesta: lo metemos dentro del array 'replies' del comentario padre
+          return prevComments.map((comment) => {
+            if (comment.id === parentId) {
+              const currentReplies = comment.replies || [];
+              return {
+                ...comment,
+                replies: [...currentReplies, newComment]
+              };
+            }
+            return comment;
+          });
+        }
+      });
       return true;
     } catch (err) {
-      setError(err?.response?.data?.message || "No se pudo publicar el comentario");
+      console.error("Error al enviar comentario:", err);
       return false;
     } finally {
       setPosting(false);
@@ -44,5 +63,14 @@ export function useComments(reportId) {
     setComments((prev) => prev.filter((c) => c.id !== commentId));
   };
 
-  return { comments, loading, error, posting, addComment, removeComment, refetch: fetchComments };
+  return {
+    comments,
+    setComments,
+    loading,
+    error,
+    posting,
+    addComment,
+    removeComment,
+    refetch: fetchComments
+  };
 }

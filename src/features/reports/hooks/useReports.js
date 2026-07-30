@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { reportClient } from "../../../shared/api/reportClient";
+import { useFocusEffect } from "@react-navigation/native";
 
 export function useReports() {
   const [reports, setReports] = useState([]);
@@ -19,9 +20,11 @@ export function useReports() {
     }
   }, []);
 
-  useEffect(() => {
-    fetchReports();
-  }, [fetchReports]);
+  useFocusEffect(
+    useCallback(() => {
+      fetchReports();
+    }, [fetchReports])
+  );
 
   const createReport = async (payload) => {
     const created = await reportClient.createReport(payload);
@@ -29,7 +32,46 @@ export function useReports() {
     return created;
   };
 
-  return { reports, loading, error, refetch: fetchReports, createReport };
+  const rateReport = async (reportId, severityLevel) => {
+    const previousReports = [...reports];
+
+    try {
+      setReports((prev) =>
+        prev.map((r) =>
+          r.id === reportId
+            ? {
+              ...r,
+              severity_rating: severityLevel,
+              danger_level: severityLevel,
+              severity: severityLevel
+            }
+            : r
+        )
+      );
+
+      const updated = await reportClient.rateReport(reportId, severityLevel);
+
+      setReports((prev) =>
+        prev.map((r) => {
+          if (r.id === reportId) {
+            return {
+              ...r,
+              ...updated,
+              severity_rating: updated?.severity_rating || updated?.danger_level || severityLevel,
+            };
+          }
+          return r;
+        })
+      );
+
+      return updated;
+    } catch (err) {
+      setReports(previousReports);
+      throw err;
+    }
+  };
+
+  return { reports, loading, error, refetch: fetchReports, createReport, rateReport };
 }
 
 export function useReportDetail(reportId) {
