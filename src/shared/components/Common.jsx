@@ -1,8 +1,13 @@
 import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { colors, spacing, typography } from "../constants/theme";
 
 export function Screen({ children, style }) {
-  return <View style={[styles.screen, style]}>{children}</View>;
+  return (
+    <SafeAreaView style={[styles.screen, style]} edges={["top"]}>
+      {children}
+    </SafeAreaView>
+  );
 }
 
 export function LoadingState({ label = "Cargando..." }) {
@@ -36,6 +41,14 @@ export function ErrorState({ message = "Ocurrió un error inesperado" }) {
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: colors.background, padding: spacing.md },
-  center: { flex: 1, alignItems: "center", justifyContent: "center", padding: spacing.lg },
+  screen: {
+    flex: 1,
+    backgroundColor: colors.background
+  },
+  center: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    padding: spacing.lg
+  },
 });

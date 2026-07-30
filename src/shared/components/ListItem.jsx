@@ -17,7 +17,7 @@ export default function ListItem({ title, subtitle, rightLabel, badgeColor, onPr
         <View
           style={[
             styles.badge,
-            { backgroundColor: badgeColor || colors.surfaceAlt },
+            { backgroundColor: badgeColor || colors.background },
           ]}
         >
           <Text style={styles.badgeText}>{rightLabel}</Text>

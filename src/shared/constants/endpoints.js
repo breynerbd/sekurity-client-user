@@ -28,7 +28,7 @@ export const AUTH_SERVICE_URL = buildUrl(
 );
 export const SERVER_USER_URL = buildUrl(
   3006,
-  "/sekurity/v1/user",   
+  "/sekurity/v1/user",
   process.env.EXPO_PUBLIC_SERVER_USER_URL
 );
 
@@ -69,4 +69,5 @@ export const COMMENT_ENDPOINTS = {
   BY_REPORT: (reportId) => `/comments/byReport/${reportId}`,
   CREATE: () => `/comments`,
   DELETE: (commentId) => `/comments/${commentId}`,
+  REACT: (commentId) => `/comments/${commentId}/react`,
 };

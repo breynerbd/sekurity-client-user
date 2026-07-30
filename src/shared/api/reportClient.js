@@ -10,4 +10,7 @@ export const reportClient = {
 
   createReport: (payload) =>
     userApi.post(REPORT_ENDPOINTS.CREATE, payload).then((r) => r.data),
+
+  rateReport: (id, severityLevel) =>
+    userApi.post(`${REPORT_ENDPOINTS.DETAIL(id)}/rate`, { severity_rating: severityLevel }).then((r) => r.data),
 };
