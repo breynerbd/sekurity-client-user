@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { Image, Text, View, StyleSheet, TouchableOpacity } from "react-native";
-import Button from "../../../shared/components/Button";
+import { Image, Text, View, StyleSheet, TouchableOpacity, ActivityIndicator } from "react-native";
 import { Screen } from "../../../shared/components/Common";
 import Input from "../../../shared/components/Input";
 import { colors, spacing, typography } from "../../../shared/constants/theme";
@@ -17,9 +16,7 @@ export default function LoginScreen({ navigation }) {
 
   return (
     <Screen style={styles.container}>
-      {/* Zona del Logotipo Corporativo */}
       <View style={styles.headerZone}>
-        {/* Cargamos tu logo desde la carpeta assets */}
         <Image
           source={require('../../../../assets/sekurity_logo.png')}
           style={styles.logo}
@@ -29,7 +26,6 @@ export default function LoginScreen({ navigation }) {
         <Text style={styles.subtitleText}>Inicia sesión para continuar</Text>
       </View>
 
-      {/* Bloque de Formulario */}
       <View style={styles.formContainer}>
         <View style={styles.inputWrapper}>
           <Text style={typography.formLabel}>Email o Usuario</Text>
@@ -43,7 +39,6 @@ export default function LoginScreen({ navigation }) {
         </View>
 
         <View style={styles.inputWrapper}>
-          {/* Esta es la fila corregida para separar los textos en los extremos 🌟 */}
           <View style={styles.passwordLabelRow}>
             <Text style={typography.formLabel}>Contraseña</Text>
             <TouchableOpacity onPress={() => navigation.navigate("ForgotPassword")}>
@@ -65,15 +60,21 @@ export default function LoginScreen({ navigation }) {
         ) : null}
 
         <View style={{ marginTop: spacing.md }}>
-          <Button
-            title={loading ? "Cargando..." : "Iniciar Sesión"}
+          <TouchableOpacity
+            style={[styles.mainButton, loading && styles.buttonDisabled]}
             onPress={handleLogin}
-            loading={loading}
-          />
+            activeOpacity={0.8}
+            disabled={loading}
+          >
+            {loading ? (
+              <ActivityIndicator color="#FFFFFF" size="small" />
+            ) : (
+              <Text style={styles.mainButtonText}>Iniciar Sesión</Text>
+            )}
+          </TouchableOpacity>
         </View>
       </View>
 
-      {/* Footer / Alternativa de cuenta */}
       <View style={styles.footerZone}>
         <Text style={styles.footerText}>¿No tienes una cuenta? </Text>
         <TouchableOpacity onPress={() => navigation.navigate("Register")}>
@@ -96,7 +97,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing.xl,
   },
   logo: {
-    width: 90,        // Ajusta el tamaño de tu logo aquí si lo requieres
+    width: 90,
     height: 90,
     marginBottom: spacing.xs,
   },
@@ -119,7 +120,7 @@ const styles = StyleSheet.create({
   },
   passwordLabelRow: {
     flexDirection: "row",
-    justifyContent: "space-between", // El truco que los empuja a los extremos opuestos 🚀
+    justifyContent: "space-between",
     alignItems: "center",
     width: "100%",
   },
@@ -129,7 +130,7 @@ const styles = StyleSheet.create({
     color: "#2563EB",
     textTransform: "uppercase",
     letterSpacing: -0.2,
-    marginBottom: 8, // Sincronizado con el margen inferior de typography.formLabel
+    marginBottom: 8,
   },
   errorText: {
     fontSize: 11,
@@ -137,6 +138,21 @@ const styles = StyleSheet.create({
     color: colors.danger || "#EF4444",
     marginTop: spacing.xs,
     marginBottom: spacing.sm,
+  },
+  mainButton: {
+    backgroundColor: "#2563EB",
+    borderRadius: 12,
+    paddingVertical: 14,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  buttonDisabled: {
+    opacity: 0.7,
+  },
+  mainButtonText: {
+    color: "#FFFFFF",
+    fontSize: 15,
+    fontWeight: "700",
   },
   footerZone: {
     flexDirection: "row",

@@ -13,14 +13,36 @@ export function useAuth() {
     setError(null);
     try {
       const { accessToken } = await authClient.login(email, password);
-      // El login solo devuelve el token; guardamos el token primero para que
-      // el interceptor de axios lo adjunte en la siguiente petición a /me
       setSession(accessToken, null);
       const me = await authClient.getMe();
       setSession(accessToken, me);
       return true;
     } catch (err) {
-      setError(err?.response?.data?.message || err?.response?.data || "No se pudo iniciar sesión");
+      const errorData = err?.response?.data;
+      let errorMessage = "Ocurrió un error al iniciar sesión";
+
+      if (typeof errorData === "string") {
+        errorMessage = errorData;
+      } else if (errorData?.errors) {
+        const validationErrors = Object.values(errorData.errors).flat();
+        errorMessage = validationErrors.length > 0 ? validationErrors[0] : errorData.title;
+      } else if (errorData?.title) {
+        errorMessage = errorData.title;
+      } else if (errorData?.message) {
+        errorMessage = errorData.message;
+      }
+
+      if (errorMessage.includes("The Email field is not a valid e-mail address.")) {
+        errorMessage = "El campo de correo electrónico no es una dirección válida.";
+      } else if (errorMessage.includes("must be a string or array type with a minimum length of")) {
+        errorMessage = "La contraseña debe tener al menos 8 caracteres.";
+      } else if (errorMessage.includes("One or more validation errors occurred.")) {
+        errorMessage = "Por favor, verifica los datos ingresados.";
+      } else if (errorMessage.includes("Invalid credentials") || errorMessage.includes("Unauthorized")) {
+        errorMessage = "Correo o contraseña incorrectos.";
+      }
+
+      setError(errorMessage);
       return false;
     } finally {
       setLoading(false);
@@ -34,7 +56,35 @@ export function useAuth() {
       await authClient.register(payload);
       return true;
     } catch (err) {
-      setError(err?.response?.data?.message || "No se pudo completar el registro");
+      const errorData = err?.response?.data;
+      let errorMessage = "No se pudo completar el registro";
+
+      if (typeof errorData === "string") {
+        errorMessage = errorData;
+      } else if (errorData?.errors) {
+        const validationErrors = Object.values(errorData.errors).flat();
+        errorMessage = validationErrors.length > 0 ? validationErrors[0] : errorData.title;
+      } else if (errorData?.title) {
+        errorMessage = errorData.title;
+      } else if (errorData?.message) {
+        errorMessage = errorData.message;
+      }
+
+      const lowerMsg = errorMessage.toLowerCase();
+
+      if (lowerMsg.includes("email") && (lowerMsg.includes("not a valid") || lowerMsg.includes("invalid"))) {
+        errorMessage = "El campo de correo electrónico no es una dirección válida.";
+      } else if (lowerMsg.includes("email") || lowerMsg.includes("correo")) {
+        errorMessage = "Este correo electrónico ya está registrado.";
+      } else if (lowerMsg.includes("username") || lowerMsg.includes("usuario")) {
+        errorMessage = "Este nombre de usuario ya está en uso.";
+      } else if (lowerMsg.includes("must be a string or array type with a minimum length of")) {
+        errorMessage = "La contraseña debe tener al menos 8 caracteres.";
+      } else if (lowerMsg.includes("one or more validation errors occurred")) {
+        errorMessage = "Por favor, verifica los datos ingresados.";
+      }
+
+      setError(errorMessage);
       return false;
     } finally {
       setLoading(false);
