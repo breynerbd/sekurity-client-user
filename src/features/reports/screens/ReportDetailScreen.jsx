@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Text, View, StyleSheet, ScrollView, StatusBar, Pressable, KeyboardAvoidingView, Platform, Modal, TextInput } from "react-native";
+import React, { useState, useEffect } from "react";
+import { Text, View, StyleSheet, ScrollView, StatusBar, Pressable, Keyboard, Platform, Modal, TextInput } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { EmptyState, ErrorState, LoadingState } from "../../../shared/components/Common";
@@ -68,7 +68,6 @@ const getStatusConfig = (status) => {
   }
 };
 
-// Componente para manejar el texto colapsable de comentarios
 function CollapsibleCommentText({ text }) {
   const [expanded, setExpanded] = useState(false);
   const [numberOfLines, setNumberOfLines] = useState(undefined);
@@ -107,6 +106,24 @@ export default function ReportDetailScreen({ route, navigation }) {
   const [replyingTo, setReplyingTo] = useState(null);
   const [expandedReplies, setExpandedReplies] = useState({});
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
+
+  useEffect(() => {
+    const showEvent = Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow";
+    const hideEvent = Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide";
+
+    const showSub = Keyboard.addListener(showEvent, (e) => {
+      setKeyboardHeight(e.endCoordinates?.height || 0);
+    });
+    const hideSub = Keyboard.addListener(hideEvent, () => {
+      setKeyboardHeight(0);
+    });
+
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, []);
 
   if (loading) return <LoadingState label="Cargando reporte..." />;
   if (error) return <ErrorState message={error} />;
@@ -357,7 +374,7 @@ export default function ReportDetailScreen({ route, navigation }) {
                               replyUserData.nombre === "Tú" ||
                               String(replyUserData.id || replyUserData.user_id || reply.user_id) === String(global.currentUserId || report?.user_id);
 
-                            const replyAuthorName = isReplyAuthorMe ? "Ari Diaz (Tú)" : (replyRawFullName || reply.userName || reply.authorName || "Usuario");
+                            const replyAuthorName = isReplyAuthorMe ? "Ari Diaz" : (replyRawFullName || reply.userName || reply.authorName || "Usuario");
 
                             return (
                               <View key={String(reply.id)} style={styles.replyCard}>
@@ -454,10 +471,7 @@ export default function ReportDetailScreen({ route, navigation }) {
         animationType="fade"
         onRequestClose={() => setIsModalVisible(false)}
       >
-        <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-          style={styles.modalOverlay}
-        >
+        <View style={styles.modalOverlay}>
           <Pressable
             style={styles.modalBackdropPress}
             onPress={() => {
@@ -465,7 +479,15 @@ export default function ReportDetailScreen({ route, navigation }) {
               setReplyingTo(null);
             }}
           />
-          <View style={[styles.mInputContainer, { paddingBottom: Math.max(insets.bottom, 16) }]}>
+          <View
+            style={[
+              styles.mInputContainer,
+              {
+                paddingBottom: Math.max(insets.bottom, 16),
+                marginBottom: keyboardHeight,
+              },
+            ]}
+          >
             <View style={styles.mModalHeader}>
               <Text style={styles.mModalTitle}>
                 {replyingTo ? "Responder comentario" : "Añadir comentario"}
@@ -517,7 +539,7 @@ export default function ReportDetailScreen({ route, navigation }) {
               </Pressable>
             </View>
           </View>
-        </KeyboardAvoidingView>
+        </View>
       </Modal>
     </View>
   );

@@ -11,10 +11,15 @@ export const userClient = {
 
   getMyComments: () => userApi.get("/comments/myComments").then((r) => r.data),
 
+  getMyRatings: () => userApi.get("/ratings/myRatings").then((r) => r.data),
+
+  deleteRating: (ratingId) => userApi.delete(`/ratings/${ratingId}`).then((r) => r.data),
+
+  updateRating: (ratingId, payload) => userApi.put(`/ratings/${ratingId}`, payload).then((r) => r.data),
+
   deleteComment: (commentId) => userApi.delete(`/comments/${commentId}`).then((r) => r.data),
 
   updateComment: (commentId, payload) => userApi.put(`/comments/${commentId}`, payload).then((r) => r.data),
 
   deleteReport: (reportId) => userApi.delete(`/reports/${reportId}`).then((r) => r.data),
-
 };

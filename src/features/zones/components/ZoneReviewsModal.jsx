@@ -59,9 +59,22 @@ export default function ZoneReviewsModal({ visible, onClose, ratings = [], zoneN
                                 description="Sé el primero en calificar esta zona"
                             />
                         }
-                        renderItem={({ item }) => (
-                            <View style={styles.ratingCard}>
-                                <View style={styles.cardHeader}>
+                        renderItem={({ item }) => {
+                            const userInfo = item.User || item.user;
+
+                            const userName = userInfo
+                                ? `${userInfo.name || ""} ${userInfo.surname || ""}`.trim() || userInfo.username || userInfo.email
+                                : "Usuario Anónimo";
+
+                            return (
+                                <View style={styles.ratingCard}>
+                                    <View style={styles.cardHeader}>
+                                        <Text style={styles.userName} numberOfLines={1}>
+                                            {userName}
+                                        </Text>
+                                        <Text style={styles.scoreBadge}>{item.score}/5</Text>
+                                    </View>
+
                                     <View style={styles.starsInline}>
                                         {[1, 2, 3, 4, 5].map((i) => (
                                             <Ionicons
@@ -72,11 +85,11 @@ export default function ZoneReviewsModal({ visible, onClose, ratings = [], zoneN
                                             />
                                         ))}
                                     </View>
-                                    <Text style={styles.scoreBadge}>{item.score}/5</Text>
+
+                                    <Text style={styles.cardComment}>{item.comment}</Text>
                                 </View>
-                                <Text style={styles.cardComment}>{item.comment}</Text>
-                            </View>
-                        )}
+                            );
+                        }}
                     />
 
                 </View>
@@ -179,5 +192,12 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: "#334155",
         lineHeight: 20,
+    },
+    userName: {
+        fontSize: 14,
+        fontWeight: "700",
+        color: "#0F172A",
+        flex: 1,
+        marginRight: 8,
     },
 });

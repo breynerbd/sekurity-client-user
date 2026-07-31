@@ -88,6 +88,19 @@ export default function ProfileScreen({ navigation }) {
               </View>
               <Ionicons name="chevron-forward" size={16} color="#94A3B8" />
             </Pressable>
+
+            <View style={styles.menuDivider} />
+
+            <Pressable style={styles.menuItem} onPress={() => navigation?.navigate("MyRatings")}>
+              <View style={[styles.menuIconWrap, { backgroundColor: "#FEF3C7" }]}>
+                <Ionicons name="star-outline" size={18} color="#D97706" />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.menuTitle}>Mis reseñas</Text>
+                <Text style={styles.menuSubtitle}>Calificaciones y valoraciones</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={16} color="#94A3B8" />
+            </Pressable>
           </View>
         </View>
 

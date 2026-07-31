@@ -12,6 +12,7 @@ import ProfileScreen from "../features/profile/screens/ProfileScreen";
 import MyReportsScreen from "../features/profile/screens/MyReportsScreen";
 import MyCommentsScreen from "../features/profile/screens/MyCommentsScreen";
 import MyReactionsScreen from "../features/profile/screens/MyReactionsScreen";
+import MyRatingsScreen from "../features/profile/screens/MyRatingsScreen";
 import { colors } from "../shared/constants/theme";
 
 const Tab = createBottomTabNavigator();
@@ -33,6 +34,7 @@ function ProfileStack() {
       <ProfileStackNav.Screen name="MyReports" component={MyReportsScreen} />
       <ProfileStackNav.Screen name="MyComments" component={MyCommentsScreen} />
       <ProfileStackNav.Screen name="MyReactions" component={MyReactionsScreen} />
+      <ProfileStackNav.Screen name="MyRatings" component={MyRatingsScreen} />
     </ProfileStackNav.Navigator>
   );
 }
@@ -63,6 +65,7 @@ export default function MainTabs() {
     <Tab.Navigator
       screenOptions={({ route }) => ({
         headerShown: false,
+        tabBarHideOnKeyboard: true,
         tabBarStyle: {
           backgroundColor: colors.surface || "#FFFFFF",
           borderTopColor: colors.border || "#E5E7EB",

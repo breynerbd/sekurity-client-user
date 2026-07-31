@@ -12,20 +12,23 @@ export function useUserProfile() {
 
   const [myReports, setMyReports] = useState([]);
   const [myComments, setMyComments] = useState([]);
+  const [myRatings, setMyRatings] = useState([]);
 
   const fetchProfileData = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const [profileData, reportsData, commentsData] = await Promise.all([
+      const [profileData, reportsData, commentsData, ratingsData] = await Promise.all([
         authClient.getMe(),
         userClient.getMyReports().catch(() => []),
-        userClient.getMyComments().catch(() => [])
+        userClient.getMyComments().catch(() => []),
+        userClient.getMyRatings().catch(() => [])
       ]);
 
       updateUser(profileData);
       setMyReports(reportsData);
       setMyComments(commentsData);
+      setMyRatings(ratingsData);
     } catch (err) {
       setError(err?.response?.data?.message || "No se pudo cargar la información del perfil");
     } finally {
@@ -55,6 +58,7 @@ export function useUserProfile() {
     user: storedUser,
     myReports,
     myComments,
+    myRatings,
     loading,
     error,
     saveProfile,
