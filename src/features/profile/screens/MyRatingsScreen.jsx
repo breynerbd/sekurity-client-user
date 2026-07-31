@@ -59,7 +59,7 @@ export default function MyRatingsScreen({ navigation }) {
                 <View style={styles.centerContainer}>
                     <Ionicons name="star-outline" size={48} color="#94A3B8" />
                     <Text style={styles.emptyTitle}>Sin reseñas</Text>
-                    <Text style={styles.emptySubtitle}>Aún no has calificado ninguna zona o reporte.</Text>
+                    <Text style={styles.emptySubtitle}>Aún no has calificado ninguna zona.</Text>
                 </View>
             ) : (
                 <FlatList
