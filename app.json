@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Sekurity",
-    "slug": "sekurity-client-user",
+    "slug": "breynerteamdev",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/sekurity_logo.png",
@@ -27,6 +27,12 @@
     },
     "web": {
       "favicon": "./assets/sekurity_logo.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "36c2b5a2-6f12-4efb-aa05-8c1948fa320f"
+      }
+    },
+    "owner": "breynerbds-team"
   }
 }
